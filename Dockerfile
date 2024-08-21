@@ -2,11 +2,10 @@ FROM python:3.12.4
 
 RUN pip install pipenv
 
-COPY Pipfile* /
-RUN pipenv install --ignore-pipfile && mkdir /app
+RUN mkdir app/
 COPY . /app
+WORKDIR /app
+RUN pipenv install --ignore-pipfile
 
-RUN ln -s $(pipenv --venv)/bin/gunicorn
-
-ENTRYPOINT [ "./gunicorn" ]
-CMD [ "-w", "4", "-b", "0.0.0.0:80", "app:api_app" ]
+ENTRYPOINT [ "pipenv", "run", "gunicorn" ]
+CMD [ "-w", "4", "-b", "0.0.0.0:80", "api:api_app" ]
