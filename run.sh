@@ -5,7 +5,7 @@ set -u -o pipefail
 cd $(dirname -- $0)
 
 echo "Building api app..."
-docker build -t api-app api/
+docker build -t api-app .
 if (( $? )); then
   echo "Could not build api app, exiting..."
 fi
