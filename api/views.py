@@ -33,7 +33,7 @@ REQUEST_TIMEOUT = 1  # second
 
 def get_signer_details():
     """Return signer details to the root view."""
-    url = app.config["rpc_uri_str"]
+    url = app.config["RPC_URI"]
 
     def make_json(method, params=None):
         if params is None:

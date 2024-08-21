@@ -1,0 +1,39 @@
+services:
+  # mongodb:
+  #   image: "mongo:7.0-jammy"
+  #   env_file: ".env"
+  #   environment:
+  #     MONGO_INITDB_ROOT_USERNAME: "$MONGODB_USER"
+  #     MONGO_INITDB_ROOT_PASSWORD: "$MONGODB_PASSWORD"
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         memory: "${MONGODB_MEMORY_LIMIT:-1G}"
+  #       reservations:
+  #         memory: "${MONGODB_MEMORY_RESERVATIONS:-1G}"
+  #   command: ["--port", "${MONGODB_PORT:-27017}"]
+  #   restart: "unless-stopped"
+
+  api:
+    build:
+      context: "./api"
+    env_file: ".env"
+    environment:
+      RPC_URI: "${API_RPC_URI:-http://localhost:3030}"
+      PORT: "${API_PORT:-8080}"
+    restart: "unless-stopped"
+    command: [ "-w", "4", "-b", "0.0.0.0:${API_PORT}", "app:api_app" ]
+    network_mode: host
+
+  nginx:
+    image: "nginx:1-alpine"
+    env_file: ".env"
+    environment:
+      LISTEN_PORT: "${NGINX_LISTEN_PORT:-8081}"
+      PROXY_PASS: "${NGINX_PROXY_PASS:-http://localhost:8080}"
+    volumes:
+      - "./nginx/templates:/etc/nginx/templates"
+    depends_on:
+      - "api"
+    restart: "unless-stopped"
+    network_mode: host

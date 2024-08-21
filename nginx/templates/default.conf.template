@@ -1,0 +1,29 @@
+server {
+    listen       ${LISTEN_PORT};
+    server_name  localhost;
+
+    access_log  /var/log/nginx/host.access.log  main;
+
+    # redirect server error pages to the static page /50x.html
+    #
+    error_page  404              /404.html;
+    error_page  500 502 503 504  /50x.html;
+    location = /50x.html {
+        root   /usr/share/nginx/html;
+    }
+
+    # As advised from
+    # https://docs.gunicorn.org/en/latest/deploy.html
+    #
+    location /api {
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header X-Forwarded-Proto $scheme;
+      proxy_set_header Host $http_host;
+      # we don't want nginx trying to do something clever with
+      # redirects, we set the Host: header above already.
+      proxy_redirect off;
+      # NOTE: env variables are injected by envsubst tool
+      # automatically
+      proxy_pass ${PROXY_PASS};
+    }
+}

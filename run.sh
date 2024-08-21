@@ -34,16 +34,16 @@ do
   fi
 done
 
-if ! [[ -v RPC_URI_STR ]]; then
-	echo "RPC_URI_STR must be set!"
+if ! [[ -v RPC_URI ]]; then
+	echo "RPC_URI must be set!"
 	exit 1
 fi
-rpc_uri_str_env="-e RPC_URI_STR"
+RPC_URI_env="-e RPC_URI"
 
 echo "Api app port set to ${API_APP_PORT:-44440}"
 
 echo "Running api app..."
-docker run -d --name $api_app_container -p ${API_APP_PORT:-44440}:80 --restart always $mongo_envs_arg $rpc_uri_str_env api-app 1>/dev/null
+docker run -d --name $api_app_container -p ${API_APP_PORT:-44440}:80 --restart always $mongo_envs_arg $RPC_URI_env api-app 1>/dev/null
 echo "Done."
 
 cd -

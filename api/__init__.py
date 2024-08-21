@@ -24,7 +24,7 @@ MONGO_CONFIG_ENVS = {
     "MONGO_COLLECTION": "collection",
 }
 
-RPC_URI_ENV = "RPC_URI_STR"
+RPC_URI_ENV = "RPC_URI"
 
 mongo_config = dict(MONGO_CONFIG)
 if (config_file := os.environ.get("MONGO_CONFIG")) is not None:
@@ -42,12 +42,12 @@ elif any(os.environ.get(env) for env in MONGO_CONFIG_ENVS):
 else:
     logger.info("MONGO_CONFIG env not set, using defaults)")
 
-if (rpc_uri_str := os.environ.get(RPC_URI_ENV)) is None:
+if (RPC_URI := os.environ.get(RPC_URI_ENV)) is None:
     logger.error("%s env must be set", RPC_URI_ENV)
     sys.exit(1)
 
 api_app = flask.Flask(__package__)
 api_app.config["SECRET_KEY"] = secrets.token_hex()
 api_app.config["mongo"] = mongo_config
-api_app.config["rpc_uri_str"] = rpc_uri_str
+api_app.config["RPC_URI"] = RPC_URI
 api_app.add_url_rule("/", view_func=root_view, methods=("POST",))
